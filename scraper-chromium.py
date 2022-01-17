@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver import Chrome
 from selenium.webdriver.common.by import By
 import undetected_chromedriver as uc
+from selenium.common.exceptions import TimeoutException
 
 import time
 import os
