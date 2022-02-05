@@ -1,7 +1,6 @@
 {
     "files.exclude": {
         "**/__pycache__/": true,
-        "**/storage.json": true,
         "**/chromedriver": true
     }
 }

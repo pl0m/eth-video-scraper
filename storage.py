@@ -6,11 +6,20 @@ import json
 # 1.new class named Storage 2.in class make object x ={"departments":[]} 3. make function for object dump in json 4. field or function for object x?
 
 class StoragePool(object):
-    def __init__(self, departments = []):
-        self.departments = departments
+    def __init__(self, departments = None):
+        if departments is None:
+            self.departments = []
+        else:
+            self.departments = [Department(**department) for department in departments]
+        
+    def __iter__(self):
+        return iter(self.departments)
         
     def add_department(self, department):
         self.departments.append(department)
+        
+    def get_departments(self):
+        return self.departments
     
     def save(self):
         json_string = json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
@@ -20,14 +29,17 @@ class StoragePool(object):
     @staticmethod
     def load():
         with open("storage.json","r") as file_input:
-            penis = json.loads(file_input.read())
-            return StoragePool(**penis)
+            data = json.loads(file_input.read())
+            return StoragePool(**data) 
 
 class Department(object):
-    def __init__(self, name, href, years = []):
+    def __init__(self, name, href, years = None):
         self.name = name
         self.href = href
-        self.years = years
+        if years is None:
+            self.years = []
+        else:
+            self.years = [Year(**year) for year in years]
     
     def get_name(self):
         return self.name
@@ -35,14 +47,23 @@ class Department(object):
     def get_href(self):
         return self.href
     
-    def set_years(self, years):
-        self.years = years
+    def add_year(self, year):
+        self.years.append(year)
+        
+    def get_years(self):
+        return self.years
+    
+    def __iter__(self):
+        return iter(self.years)
         
 class Year(object):
-    def __init__(self, year, href,semesters = []):
+    def __init__(self, year, href,semesters = None):
         self.year = year
         self.href = href
-        self.semesters = semesters
+        if semesters is None:
+            self.semesters = []
+        else:
+            self.semesters = [Semester(**semester) for semester in semesters]
     
     def get_year(self):
         return self.year
@@ -54,10 +75,13 @@ class Year(object):
         self.semesters = semesters
         
 class Semester(object):
-    def __init__(self, semester, href,subjects = []):
+    def __init__(self, semester, href, subjects = None):
         self.semester = semester
         self.href = href
-        self.subjects = subjects
+        if subjects is None:
+            self.subjects = []
+        else:
+            self.subjects = [Subject(**subject) for subject in subjects]
     
     def get_semester(self):
         return self.semester
@@ -69,11 +93,14 @@ class Semester(object):
         self.subjects = subjects
         
 class Subject(object):
-    def __init__(self, name, href,categories = [], id = ""):
+    def __init__(self, name, href, id, categories = None):
         self.name = name
         self.href = href
-        self.id = id # TODO: Extract ID from href
-        self.categories = categories
+        self.id = id
+        if categories is None:
+            self.categories = []
+        else:
+            self.categories = [Category(**category) for category in categories]
     
     def get_name(self):
         return self.name
@@ -88,12 +115,15 @@ class Subject(object):
         self.categories = categories
 
 class Category(object):
-    def __init__(self, name, href, description, lecturers, lectures = []):
+    def __init__(self, name, href, description, lecturers, lectures = None):
         self.name = name
         self.href = href
         self.description = description
         self.lecturers = lecturers
-        self.lectures = lectures
+        if lectures is None:
+            self.lectures = []
+        else:
+            self.lectures = [Lecture(**lecture) for lecture in lectures]
     
     def get_name(self):
         return self.name
@@ -105,13 +135,13 @@ class Category(object):
         self.lectures.append(lecture)
 
 class Lecture(object):
-    def __init__(self, date, length, page_href = '', links = []):
+    def __init__(self, date, length, page_href = '', links = None):
         self.date = date
         self.length = length
-        if len(links) == 0:
+        if links is None:
             self.links = [ Link(page_href, 'page') ]
         else:
-            self.links = links
+            self.links = [Link(**link) for link in links]
     
     def get_date(self):
         return self.date

@@ -12,9 +12,26 @@ class Scraper:
         
         # Check if we already have a storage.json file
         if os.path.isfile('storage.json') and os.access('storage.json', os.R_OK):
+            # Rebuild our storage structure from the file
             self.store = StoragePool.load()
         else:
+            # Create a new storage structure
             self.store = StoragePool()
+            
+    # Oberfunktion
+    def scrape_everything(self):
+        # Scrapes all departments
+        self.scrape_departments()
+        
+        # Iterates through our departments and scrapes their years
+        for department in self.store:
+            self.scrape_years(department)
+        
+        # First iterates through our departments
+        for department in self.store:
+            # Then iterates through their years and scrapes their semesters
+            for year in department:
+                self.scrape_semesters(year)
     
     def scrape_departments(self):
         self.driver.get('https://video.ethz.ch/lectures.html')
@@ -25,22 +42,24 @@ class Scraper:
         for department_link in department_links:
             department_href = department_link.get_attribute('href')
             department_name = department_href.rsplit('/', 1)[1].split('.')[0].upper()
+            # Add a new department to the storage pool
             self.store.add_department(Department(department_name, department_href))
 
 
     def scrape_years(self, department):
-        self.driver.get(f'https://video.ethz.ch/lectures/{department.lower()}.html')
+        self.driver.get(department.get_href())
         
         # Get all link elements
         years_links = self.driver.find_elements(By.CSS_SELECTOR, '.newsListBox a')
         
         for year_link in years_links:
             year_href = year_link.get_attribute('href')
-            print(year_href)
-        
+            year_year = year_href.rsplit('/', 1)[1].split('.')[0]
+            # Add a new year to the department
+            department.add_year(Year(year_year, year_href))
 
-    def scrape_semesters(self, department, year):
-        self.driver.get(f'https://video.ethz.ch/lectures/{department.lower()}/{year}.html')
+    def scrape_semesters(self, year):
+        self.driver.get(year.get_href())
         
         # Get all link elements
         semesters_links = self.driver.find_elements(By.CSS_SELECTOR, '.newsListBox a')
