@@ -41,6 +41,7 @@ class Scraper:
         
         for department_link in department_links:
             department_href = department_link.get_attribute('href')
+            # Get name from link (split link from end by '/' and limit results to 1, then get the second [1] element)
             department_name = department_href.rsplit('/', 1)[1].split('.')[0].upper()
             # Add a new department to the storage pool
             self.store.add_department(Department(department_name, department_href))
@@ -66,10 +67,11 @@ class Scraper:
         
         for semester_link in semesters_links:
             semester_href = semester_link.get_attribute('href')
-            print(semester_href)
+            semester_semester = semester_href.rsplit('/', 1)[1].split('.')[0].capitalize()
+            year.add_semester(Semester(semester_semester, semester_href))
             
-    def scrape_subjects(self, department, year, semester):
-        self.driver.get(f'https://video.ethz.ch/lectures/{department.lower()}/{year}/{semester.lower()}.html')
+    def scrape_subjects(self, semester):
+        self.driver.get(semester.get_href())
         
         # Get all link elements
         subject_links = self.driver.find_elements(By.CSS_SELECTOR, '.newsListBox a')
@@ -78,7 +80,8 @@ class Scraper:
             subject_href = subject_link.get_attribute('href')
             subject_name = subject_link.find_element(By.CSS_SELECTOR, 'h2').text
             subject_lecturers = subject_link.find_element(By.CSS_SELECTOR, '.description').text
-            print(f'{subject_name} is presented by {subject_lecturers}')
+            subject_id = subject_href.rsplit('/', 1)[1].split('.')[0]
+            semester.add_subject(Subject(subject_name, subject_href, subject_id))
             
     def get_login_state(self):
         video_login_elements = self.driver.find_elements(By.CSS_SELECTOR, '#login')
