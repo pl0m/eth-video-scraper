@@ -32,6 +32,15 @@ class Scraper:
             # Then iterates through their years and scrapes their semesters
             for year in department:
                 self.scrape_semesters(year)
+        
+        # First iterates through our departments
+        for department in self.store:
+            # Then iterates through their years
+            for year in department:
+                # Then iterates through their semesters and scrapes their subjects
+                for semester in year:
+                    self.scrape_subjects(semester)
+                    
     
     def scrape_departments(self):
         self.driver.get('https://video.ethz.ch/lectures.html')
@@ -82,6 +91,9 @@ class Scraper:
             subject_lecturers = subject_link.find_element(By.CSS_SELECTOR, '.description').text
             subject_id = subject_href.rsplit('/', 1)[1].split('.')[0]
             semester.add_subject(Subject(subject_name, subject_href, subject_id))
+            
+    def scrape_lectures(self, subject):
+        self.driver.get(subject.get_href())
             
     def get_login_state(self):
         video_login_elements = self.driver.find_elements(By.CSS_SELECTOR, '#login')
