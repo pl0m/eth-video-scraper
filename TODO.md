@@ -2,8 +2,11 @@
 
 ### Data Storage
 - [x] Storage and class structure
+  - [x] JSON file structure
+  - [x] Class structure
 - [ ] Credentials file
-  - [ ] 
+  - [x] JSON file structure
+  - [ ] Class structure
 
 ### Scraping
 - [x] Scrape departments
