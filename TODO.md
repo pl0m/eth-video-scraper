@@ -10,7 +10,6 @@
 - [x] Scrape years
 - [x] Scrape semesters
 - [x] Scrape subjects
-- [ ] Scrape categories
 - [ ] Scrape Lectures
 - [ ] Scrape MP4-Files
   - [ ] Check if logged in

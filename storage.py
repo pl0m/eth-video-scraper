@@ -74,6 +74,9 @@ class Year(object):
     def set_semesters(self, semesters):
         self.semesters = semesters
         
+    def __iter__(self):
+        return iter(self.semesters)
+        
 class Semester(object):
     def __init__(self, semester, href, subjects = None):
         self.semester = semester
@@ -91,35 +94,15 @@ class Semester(object):
     
     def set_subjects(self, subjects):
         self.subjects = subjects
+    
+    def __iter__(self):
+        return iter(self.subjects)
         
 class Subject(object):
-    def __init__(self, name, href, id, categories = None):
+    def __init__(self, name, href, id, lectures = None):
         self.name = name
         self.href = href
         self.id = id
-        if categories is None:
-            self.categories = []
-        else:
-            self.categories = [Category(**category) for category in categories]
-    
-    def get_name(self):
-        return self.name
-    
-    def get_href(self):
-        return self.href
-    
-    def get_id(self):
-        return self.id
-    
-    def set_categories(self, categories):
-        self.categories = categories
-
-class Category(object):
-    def __init__(self, name, href, description, lecturers, lectures = None):
-        self.name = name
-        self.href = href
-        self.description = description
-        self.lecturers = lecturers
         if lectures is None:
             self.lectures = []
         else:
@@ -131,11 +114,20 @@ class Category(object):
     def get_href(self):
         return self.href
     
+    def get_id(self):
+        return self.id
+    
     def add_lecture(self, lecture):
         self.lectures.append(lecture)
+        
+    def __iter__(self):
+        return iter(self.lectures)
 
 class Lecture(object):
-    def __init__(self, date, length, page_href = '', links = None):
+    def __init__(self, name, description, date, length, lecturers, page_href = '', links = None):
+        self.name = name
+        self.description = description
+        self.lecturers = lecturers
         self.date = date
         self.length = length
         if links is None:
@@ -154,6 +146,18 @@ class Lecture(object):
     
     def add_link(self, link):
         self.links.append(link)
+    
+    def get_name(self):
+        return self.name
+    
+    def get_description(self):
+        return self.description
+    
+    def get_lecturers(self):
+        return self.lecturers
+    
+    def __iter__(self):
+        return iter(self.links)
         
 class Link(object):
     def __init__(self, href, type):
